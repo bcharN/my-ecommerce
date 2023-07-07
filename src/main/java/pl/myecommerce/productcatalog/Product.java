@@ -7,14 +7,16 @@ public class Product {
 
     private final UUID uuid;
     private final String name;
+    private String desc;
     private BigDecimal price;
     private boolean online;
+    private String image;
 
 
-    public Product(UUID uuid, String name){
+    public Product(UUID uuid, String name, String desc){
         this.uuid = uuid;
         this.name = name;
-
+        this.desc = desc;
     }
     public UUID getId(){
         return uuid;
@@ -26,8 +28,8 @@ public class Product {
     public BigDecimal getPrice() {
         return price;
     }
-    public void publish(){
-        this.online = true;
+    public void setOnline(boolean online){
+        this.online = online;
     }
     public boolean isOnline(){
         return this.online;
@@ -36,4 +38,7 @@ public class Product {
         return name;
     }
 
+    public void setImage(String imageKey) {
+        this.image = imageKey;
+    }
 }

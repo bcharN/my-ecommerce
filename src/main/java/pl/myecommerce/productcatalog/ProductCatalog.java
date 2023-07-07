@@ -6,21 +6,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ProductCatalog {
-    HashMapProductStorage storage;
+    private ProductStorage storage;
 
 
-    public ProductCatalog(HashMapProductStorage storage) {
-        return new
+    public ProductCatalog(ProductStorage storage) {
+        this.storage = storage;
     }
 
-    public String createProduct(String name) {
-        Product product = new Product(UUID.randomUUID(),name);
-        storage.save(product);
+    public String addProduct(String name, String desc) {
+        Product product = new Product(UUID.randomUUID(),name,desc);
+        storage.add(product);
         return String.valueOf(product.getId());
     }
 
-    public List<Product> allAvailableProducts() {
-        return storage.allAvailableProducts();
+    public List<Product> allProducts() {
+        return storage.allProducts();
 
     }
 
@@ -29,22 +29,29 @@ public class ProductCatalog {
     }
 
     public void changePrice(String productId, BigDecimal newPrice) {
-        Product product = storage.load(productId)
+        Product product = storage.loadById(productId)
                         .orElseThrow(()->new ProductDoesNotExistException());
         product.changePrice(newPrice);
     }
 
+
+    public void assignImage(String productId, String imageKey) {
+        Product product = storage.loadById(productId)
+                .orElseThrow(()->new ProductDoesNotExistException());
+
+        product.setImage(imageKey);
+    }
     public Optional<Product> findProduct(String productId) {
-        return storage.load(productId);
+        return storage.loadById(productId);
     }
 
     public void publish(String productId) {
-        Product product = storage.load(productId)
+        Product product = storage.loadById(productId)
                 .orElseThrow(()->new ProductDoesNotExistException());
 
         if(product.getPrice() == null){
             throw new CantPublishProductException();
         }
-        product.publish();
+        product.setOnline(true);
     }
 }

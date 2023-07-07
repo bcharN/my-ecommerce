@@ -12,7 +12,7 @@ public class HashMapProductStorage implements ProductStorage {
         this.products = new HashMap<>();
     }
     @Override
-    public void save(Product product) {
+    public void add(Product product) {
         products.put(String.valueOf(product.getId()),product);
     }
 
@@ -25,7 +25,7 @@ public class HashMapProductStorage implements ProductStorage {
     }
 
     @Override
-    public List<Product> allAvailableProducts() {
+    public List<Product> allProducts() {
         return products.values()
                 .stream()
                 .collect(Collectors.toList());
@@ -33,7 +33,7 @@ public class HashMapProductStorage implements ProductStorage {
     }
 
     @Override
-    public Optional<Product> load(String productId) {
+    public Optional<Product> loadById(String productId) {
         return Optional.ofNullable(products.get(productId));
     }
 }

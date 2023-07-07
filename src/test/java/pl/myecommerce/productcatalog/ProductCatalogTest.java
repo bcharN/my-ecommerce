@@ -14,10 +14,10 @@ public class ProductCatalogTest {
         ProductCatalog catalog = thereIsProductCatalog();
 
         //A
-        String productIs = catalog.createProduct("Lego Set");
+        String productIs = catalog.addProduct("Lego Set","nice one");
 
         //A
-        List<Product> products = catalog.allAvailableProducts();
+        List<Product> products = catalog.allProducts();
         List<Product> publishedProducts = catalog.allPublishedProducts();
         assert products.size() == 1;
         assert publishedProducts.size() == 0;
@@ -29,7 +29,7 @@ public class ProductCatalogTest {
     @Test
     void itAllowsToChangePrice(){
         ProductCatalog catalog = thereIsProductCatalog();
-        String productId = catalog.createProduct("Lego Set");
+        String productId = catalog.addProduct("Lego Set","nice one");
 
         catalog.changePrice(productId, BigDecimal.valueOf(20.20));
 
@@ -42,7 +42,7 @@ public class ProductCatalogTest {
     @Test
     void itDenyPublicationWithoutPriceAndAttributes(){
         ProductCatalog catalog = thereIsProductCatalog();
-        String productId = catalog.createProduct("Lego Set");
+        String productId = catalog.addProduct("Lego Set","nice one");
 
         assertThrows(CantPublishProductException.class,()->catalog.publish(productId));
 
@@ -51,7 +51,7 @@ public class ProductCatalogTest {
     void itAllowsProductPublication(){
         //AAA
         ProductCatalog catalog = thereIsProductCatalog();
-        String productId = catalog.createProduct("Lego Set");
+        String productId = catalog.addProduct("Lego Set","nice one");
         catalog.changePrice(productId,BigDecimal.valueOf(20.30));
         catalog.publish(productId);
 
@@ -61,7 +61,8 @@ public class ProductCatalogTest {
     }
 
     private ProductCatalog thereIsProductCatalog() {
-        return new ProductCatalog(new HashMapProductStorage());
+        return new ProductCatalog(
+                new HashMapProductStorage());
     }
 
 }

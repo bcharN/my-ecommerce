@@ -5,11 +5,11 @@ import java.util.Optional;
 
 public class ListProductStorage implements ProductStorage{
     @Override
-    public void save ( Product product){
+    public void add(Product product){
 
     }
     @Override
-    public List<Product> allAvailableProducts(){
+    public List<Product> allProducts(){
         return null;
     }
     @Override
@@ -17,7 +17,7 @@ public class ListProductStorage implements ProductStorage{
         return null;
     }
     @Override
-    public Optional<Product> load(String productId){
+    public Optional<Product> loadById(String productId){
         return Optional.empty();
     }
 }

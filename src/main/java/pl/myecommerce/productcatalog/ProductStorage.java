@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductStorage {
-    void save(Product product);
+    void add(Product product);
 
     List<Product> allPublishedProducts();
 
-    List<Product> allAvailableProducts();
+    List<Product> allProducts();
 
-    Optional<Product> load(String productId);
+    Optional<Product> loadById(String productId);
 }
