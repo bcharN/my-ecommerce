@@ -5,6 +5,10 @@ import java.util.UUID;
 public class Product {
 
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     private final UUID uuid;
     private final String name;
     private String desc;
@@ -18,8 +22,8 @@ public class Product {
         this.name = name;
         this.desc = desc;
     }
-    public UUID getId(){
-        return uuid;
+    public String getId(){
+        return String.valueOf(uuid);
     }
 
     public void changePrice(BigDecimal newPrice){
@@ -40,5 +44,9 @@ public class Product {
 
     public void setImage(String imageKey) {
         this.image = imageKey;
+    }
+
+    public String getImage() {
+        return this.image;
     }
 }

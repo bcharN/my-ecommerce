@@ -45,7 +45,7 @@ public class ProductCatalog {
         return storage.loadById(productId);
     }
 
-    public void publish(String productId) {
+    public void publishProduct(String productId) {
         Product product = storage.loadById(productId)
                 .orElseThrow(()->new ProductDoesNotExistException());
 
@@ -54,4 +54,9 @@ public class ProductCatalog {
         }
         product.setOnline(true);
     }
+
+    public Product loadById(String productId) {
+        return storage.loadById(productId).orElseThrow(()->new ProductDoesNotExistException());
+    }
+
 }
