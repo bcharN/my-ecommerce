@@ -5,8 +5,10 @@ import java.util.UUID;
 public class Product {
 
 
-    public UUID getUuid() {
-        return uuid;
+
+
+    public String getUuid() {
+        return uuid.toString();
     }
 
     private final UUID uuid;
@@ -48,5 +50,9 @@ public class Product {
 
     public String getImage() {
         return this.image;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 }

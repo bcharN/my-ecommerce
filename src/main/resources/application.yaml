@@ -1,0 +1,15 @@
+server:
+  port: 8282
+
+spring:
+  datasource:
+    url: jdbc:h2:memory:testDB
+    username: sa
+    password: ~
+
+  h2:
+    console:
+      enabled: true
+      path: /h2db
+
+

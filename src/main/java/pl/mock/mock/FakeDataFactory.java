@@ -1,13 +1,10 @@
-package pl.myecommerce.mock;
+package pl.mock.mock;
 
 import net.datafaker.Faker;
-import net.datafaker.providers.base.BaseFaker;
-import net.datafaker.providers.base.BaseProviders;
-import net.datafaker.providers.base.Book;
 
 import java.math.BigDecimal;
 
-public class FakeBookFactory {
+public class FakeDataFactory {
     private static Faker faker = new Faker();
     public static String getTitle(){
         return faker.book().title();
@@ -22,5 +19,9 @@ public class FakeBookFactory {
     }
     public static String getImgPath(){
         return ("/images/"+faker.book().title()+".png").replaceAll(" ","_");
+    }
+
+    public static String getName() {
+        return faker.name().name();
     }
 }
