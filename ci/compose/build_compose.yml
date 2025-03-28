@@ -1,0 +1,32 @@
+services:
+  build_app:
+    build:
+      context: .
+      dockerfile: ../dockerfiles/maven_step.Dockerfile
+    volumes:
+      - ../../src/:/../source/src/
+      - ../../pom.xml:/../source/pom/pom.xml
+      - dependencies:/root/.m2
+      - output:/../source/output
+  
+  serve_app:
+    image: amazoncorretto:17.0.14-alpine3.21
+    container_name: my-ecommerce
+    ports:
+      - "8282:8282"
+    restart: always
+    volumes:
+      - output:/home/output/
+    depends_on:
+      build_app:
+        condition: service_completed_successfully
+    command: ["sh", "-c", "ls home/output ; mkdir -p /home/app ; rm -rf /home/app/*.jar ; cp /home/output/*.jar /home/app/my-ecommerce.jar ; cd /home/app ; ls ; java -Dserver.port=8282 -jar my-ecommerce.jar"]
+volumes:
+  dependencies:
+  output: 
+
+
+
+
+
+
