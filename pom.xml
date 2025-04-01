@@ -23,17 +23,26 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>pl.myecommerce.App</mainClass>
+                    <port>8086</port>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <port>8086</port>
                     <source>17</source>
                     <target>17</target>
                     <!-- <mainClass>com.example.myecommerce.MyEcommerceApplication</mainClass> -->
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+
             <!-- <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>

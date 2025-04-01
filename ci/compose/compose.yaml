@@ -3,16 +3,12 @@ services:
     build: 
       context: ../../
       dockerfile: ../dockerfiles/maven_build.Dockerfile
-    # image: my-ecommerce:latest
+      args:
+        MAVEN_OPTS: clean package        
     restart: always
     container_name: my-ecommerce
     ports:
-      - "8383:8383"
-    volumes:
-      # - ../../src/:/../source/src/
-      # - ../../pom.xml:/../source/pom/pom.xml
-      - dependencies:/root/.m2
-      # - output:/../source/output 
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -20,43 +16,48 @@ services:
       - dev
       - prod
       
-  app_test:
-    build: 
-      context: ../../
-      dockerfile: ../dockerfiles/maven_step.Dockerfile
-    # image: my-ecommerce:latest
-    restart: always
-    container_name: my-ecommerce
-    ports:
-      - "8383:8383"
+  # app_test:
+  #   build: 
+  #     context: ../../
+  #     dockerfile: ../dockerfiles/maven_build.Dockerfile
+  #     args:
+  #       MAVEN_OPTS: test
+  #   restart: always
+  #   container_name: my-ecommerce
+  #   ports:
+  #     - "8080:8080"
+  #   profiles:
+  #     - test
+
+  tests:
+    image: maven:3.9.9-amazoncorretto-17-debian-bookworm
+    stop_signal: SIGKILL
+    stdin_open: true
+    tty: true
+    working_dir: /my-ecommerce/
     volumes:
-      # - ../../src/:/../source/src/
-      # - ../../pom.xml:/../source/pom/pom.xml
+      - ../../:/my-ecommerce/
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Maven cache (optional)
       - dependencies:/root/.m2
-      # - output:/../source/output 
-    depends_on:
-      db:
-        condition: service_healthy
+    command: mvn -Dmaven.tomcat.port=8080 test
+    ports:
+      - "8080:8080"
     profiles:
       - test
 
   app_e2e:
-    build: 
-      context: ../../
-      dockerfile: ../dockerfiles/maven_step.Dockerfile
-    # image: my-ecommerce:latest
-    restart: always
-    container_name: my-ecommerce
-    ports:
-      - "8383:8383"
+    image: maven:3.9.9-amazoncorretto-17-debian-bookworm
+    stop_signal: SIGKILL
+    stdin_open: true
+    tty: true
+    working_dir: ./my-ecommerce/
     volumes:
-      # - ../../src/:/../source/src/
-      # - ../../pom.xml:/../source/pom/pom.xml
+      - ../../:./my-ecommerce/
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Maven cache (optional)
       - dependencies:/root/.m2
-      # - output:/../source/output 
-    depends_on:
-      db:
-        condition: service_healthy
+    command: mvn verify
     profiles:
       - e2e
 
@@ -77,14 +78,64 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: my-ecommerce
-    
 
+#get IP of db
+# docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id
+  db_test:
+    image: postgres:17.4-bookworm
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "root", "-d", "my-ecommerce"]
+      interval: 5s  
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: my-ecommerce
+    profiles:
+      - none    
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    container_name: pgadmin
+    ports:
+      - "8084:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin 
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "0Ct9o@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "root"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  liquibase:
+    image: liquibase:4.31.1-alpine
+    # restart: always
+    container_name: liquibase
+    command: --log-level=info --change-log=classpath:db/changelog/changelog-master.xml --url=jdbc:postgresql://db:5432/my-ecommerce --username=root --password=root update
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - none
+    
+volumes:  
+  db_data:
+  pgadmin_data:
+  dependencies:
   # liquibase:
     
-networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
+# networks:
+#   frontend:
+#     driver: bridge
+#   backend:
+#     driver: bridge
   
     
