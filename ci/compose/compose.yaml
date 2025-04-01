@@ -1,0 +1,90 @@
+services:
+  app:
+    build: 
+      context: ../../
+      dockerfile: ../dockerfiles/maven_build.Dockerfile
+    # image: my-ecommerce:latest
+    restart: always
+    container_name: my-ecommerce
+    ports:
+      - "8383:8383"
+    volumes:
+      # - ../../src/:/../source/src/
+      # - ../../pom.xml:/../source/pom/pom.xml
+      - dependencies:/root/.m2
+      # - output:/../source/output 
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - dev
+      - prod
+      
+  app_test:
+    build: 
+      context: ../../
+      dockerfile: ../dockerfiles/maven_step.Dockerfile
+    # image: my-ecommerce:latest
+    restart: always
+    container_name: my-ecommerce
+    ports:
+      - "8383:8383"
+    volumes:
+      # - ../../src/:/../source/src/
+      # - ../../pom.xml:/../source/pom/pom.xml
+      - dependencies:/root/.m2
+      # - output:/../source/output 
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - test
+
+  app_e2e:
+    build: 
+      context: ../../
+      dockerfile: ../dockerfiles/maven_step.Dockerfile
+    # image: my-ecommerce:latest
+    restart: always
+    container_name: my-ecommerce
+    ports:
+      - "8383:8383"
+    volumes:
+      # - ../../src/:/../source/src/
+      # - ../../pom.xml:/../source/pom/pom.xml
+      - dependencies:/root/.m2
+      # - output:/../source/output 
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - e2e
+
+  db:
+    image: postgres:17.4-bookworm
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "root", "-d", "my-ecommerce"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: my-ecommerce
+    
+
+  # liquibase:
+    
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+  
+    
